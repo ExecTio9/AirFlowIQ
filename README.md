@@ -28,7 +28,7 @@ Sensors → ESP32 Sensor Node → WiFi / LoRa → ESP32 Hotspot Gateway → Goog
 - **BME280** — Temp / Humidity / Pressure
 - **MFRC522** — RFID Filter Sensor
 - **14-bit ADC** — Battery Monitor
-- **12V Brushless Fan** — Wind Speed Sensor
+- **5.5V Brushless Fan** — Wind Speed Sensor
 - **RFM95** — LoRa Module
 - **RGB LED** — Diagnostics
 - **USB** — Power & Diagnostics Mode
@@ -120,8 +120,6 @@ Edit these parameters in your code:
 # Diagnostic Mode (RGB LED)
 ##Trigger:
 USB Plug-In
-GPIO Wake Pin
-LoRa Ping from Gateway
 
 ## LED Codes
 ### Sensor Status Pulse
@@ -144,11 +142,8 @@ Blue	LoRa active
 Red	Offline / No communication
 
 # Roadmap / TODO
-- Wind Speed calibration improvements
 - Dynamic LoRa Node ID assignment
 - Full OTA update pipeline via Gateway
-- Additional sensor support (VOC, PM2.5)
-- Expand Google Sheets logging format
 
 # Internal Links
 - [FiltSure_Watch monitoring sheet](https://docs.google.com/spreadsheets/d/1jLbKlstPxHlD7kHZhQn0Z-8PDUdkm7ZQxHZjDr8VWqw/edit?gid=1254838656#gid=1254838656)
