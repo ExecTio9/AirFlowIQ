@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AirFlowIQ Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+    h1, h2 {
+      margin-top: 0;
+    }
+    .card {
+      background: #020617;
+      border-radius: 0.75rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      border: 1px solid #1f2937;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+      color: #9ca3af;
+    }
+    input {
+      width: 100%;
+      padding: 0.4rem 0.5rem;
+      border-radius: 0.4rem;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
+      margin-bottom: 0.5rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #38bdf8;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: #22c55e;
+      color: #020617;
+    }
+    button.secondary {
+      background: #1f2937;
+      color: #e5e7eb;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .col {
+      flex: 1;
+      min-width: 260px;
+    }
+    .muted {
+      color: #6b7280;
+      font-size: 0.8rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      background: #111827;
+      border: 1px solid #1f2937;
+      color: #9ca3af;
+      margin-left: 0.3rem;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li {
+      margin-bottom: 0.5rem;
+      padding: 0.5rem 0.6rem;
+      border-radius: 0.5rem;
+      background: #020617;
+      border: 1px solid #111827;
+    }
+    #status {
+      min-height: 1.2em;
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+    code {
+      font-size: 0.8rem;
+      background: #0b1120;
+      padding: 0.15rem 0.35rem;
+      border-radius: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>AirFlowIQ – FiltSure Login Demo</h1>
+  <p class="muted">
+    Simple test UI: sign up / log in, then see only <strong>your</strong> devices.
+  </p>
+
+  <div class="card" id="auth-card">
+    <h2>Auth</h2>
+    <div class="row">
+      <div class="col">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com" />
+
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••••••" />
+
+        <button id="btn-signup">Sign Up</button>
+        <button id="btn-login" class="secondary">Log In</button>
+        <button id="btn-logout" class="secondary" style="display:none;">Log Out</button>
+
+        <div id="status" class="muted"></div>
+      </div>
+      <div class="col">
+        <div><strong>Current user:</strong></div>
+        <div id="current-user" class="muted">Not logged in</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="devices-card" style="display:none;">
+    <h2>My Devices <span class="badge" id="device-count">0</span></h2>
+
+    <div class="row">
+      <div class="col">
+        <h3 style="margin-top:0;">Add Device</h3>
+        <label for="device-name">Device name</label>
+        <input id="device-name" placeholder="Upstairs unit" />
+
+        <label for="device-location">Location</label>
+        <input id="device-location" placeholder="Hallway" />
+
+        <button id="btn-add-device">Add Device</button>
+      </div>
+
+      <div class="col">
+        <h3 style="margin-top:0;">Devices</h3>
+        <ul id="device-list"></ul>
+      </div>
+    </div>
+  </div>
+
+    <div class="card" id="logs-card" style="display:none;">
+    <h2>Device Logs</h2>
+    <div class="row">
+      <div class="col">
+        <div class="muted" id="logs-device-label">No device selected.</div>
+        <button id="btn-add-fake-log">Add Test Log</button>
+      </div>
+      <div class="col">
+        <h3 style="margin-top:0;">Recent Logs</h3>
+        <ul id="log-list"></ul>
+      </div>
+    </div>
+  </div>
+  
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    // TODO: put your real values here from Supabase dashboard → Project Settings → API
+    const SUPABASE_URL = "https://hniplnaohvcbtmelatnz.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuaXBsbmFvaHZjYnRtZWxhdG56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ1Nzk0MjAsImV4cCI6MjA4MDE1NTQyMH0.g7sgeZBW0RKkMI1lryA96Sym6cnejUAcmIx_npGr1Ko";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // DOM elements
+    const emailEl = document.getElementById("email");
+    const passwordEl = document.getElementById("password");
+    const statusEl = document.getElementById("status");
+    const currentUserEl = document.getElementById("current-user");
+    const btnSignup = document.getElementById("btn-signup");
+    const btnLogin = document.getElementById("btn-login");
+    const btnLogout = document.getElementById("btn-logout");
+    const devicesCard = document.getElementById("devices-card");
+    const deviceListEl = document.getElementById("device-list");
+    const deviceCountEl = document.getElementById("device-count");
+    const deviceNameEl = document.getElementById("device-name");
+    const deviceLocationEl = document.getElementById("device-location");
+    const btnAddDevice = document.getElementById("btn-add-device");const logsCard = document.getElementById("logs-card");
+    const logsDeviceLabel = document.getElementById("logs-device-label");
+    const logListEl = document.getElementById("log-list");
+    const btnAddFakeLog = document.getElementById("btn-add-fake-log");
+
+    let selectedDevice = null;
+
+
+    function setStatus(msg, isError = false) {
+      statusEl.textContent = msg || "";
+      statusEl.style.color = isError ? "#f97373" : "#9ca3af";
+    }
+
+    function setLoading(isLoading) {
+      btnSignup.disabled = isLoading;
+      btnLogin.disabled = isLoading;
+      btnLogout.disabled = isLoading;
+      btnAddDevice.disabled = isLoading;
+    }
+
+    async function refreshSessionAndUI() {
+      const { data } = await supabase.auth.getSession();
+      const session = data.session;
+      if (!session) {
+        currentUserEl.textContent = "Not logged in";
+        devicesCard.style.display = "none";
+        btnLogout.style.display = "none";
+        return;
+      }
+
+      const user = session.user;
+      currentUserEl.textContent = `${user.email} (${user.id})`;
+      btnLogout.style.display = "inline-block";
+      devicesCard.style.display = "block";
+
+      await loadDevices();
+    }
+
+    async function signUp() {
+      setLoading(true);
+      setStatus("Signing up...");
+      try {
+        const email = emailEl.value.trim();
+        const password = passwordEl.value;
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: email.split("@")[0] || "" }, // feeds into profiles trigger
+          },
+        });
+        if (error) throw error;
+        setStatus("Sign-up successful. Check your email if confirmations are enabled.");
+        await refreshSessionAndUI();
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Sign-up failed", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function logIn() {
+      setLoading(true);
+      setStatus("Logging in...");
+      try {
+        const email = emailEl.value.trim();
+        const password = passwordEl.value;
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        setStatus("Logged in.");
+        await refreshSessionAndUI();
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Login failed", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    async function logOut() {
+      setLoading(true);
+      setStatus("Logging out...");
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        setStatus("Logged out.");
+        await refreshSessionAndUI();
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Logout failed", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    async function loadDevices() {
+      setStatus("Loading devices...");
+      const { data, error } = await supabase
+        .from("devices")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error(error);
+        setStatus(error.message || "Failed to load devices", true);
+        return;
+      }
+
+      deviceListEl.innerHTML = "";
+      data.forEach((dev) => {
+        const li = document.createElement("li");
+        li.style.cursor = "pointer";
+        li.innerHTML = `
+          <div><strong>${dev.name}</strong></div>
+          <div class="muted">${dev.hvac_location || "No location"} • created ${new Date(
+          dev.created_at
+        ).toLocaleString()}</div>
+          <div class="muted"><code>${dev.id}</code></div>
+        `;
+        li.addEventListener("click", () => {
+          selectedDevice = dev;
+          logsDeviceLabel.textContent = `Logs for: ${dev.name} (${dev.id})`;
+          logsCard.style.display = "block";
+          loadLogs(dev.id);
+        });
+        deviceListEl.appendChild(li);
+      });
+
+      deviceCountEl.textContent = data.length;
+      setStatus("");
+    }
+
+        async function loadLogs(deviceId) {
+      setStatus("Loading logs...");
+      const { data, error } = await supabase
+        .from("sensor_logs")
+        .select("*")
+        .eq("device_id", deviceId)
+        .order("recorded_at", { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.error(error);
+        setStatus(error.message || "Failed to load logs", true);
+        return;
+      }
+
+      logListEl.innerHTML = "";
+      if (data.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "No logs yet.";
+        logListEl.appendChild(li);
+      } else {
+        data.forEach((log) => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <div><strong>${log.filter_status || "unknown"}</strong> • ${new Date(
+            log.recorded_at
+          ).toLocaleString()}</div>
+            <div class="muted">
+              T=${log.temp_c ?? "–"} °C, H=${log.humidity ?? "–"} %, P=${log.pressure_pa ?? "–"} Pa
+            </div>
+          `;
+          logListEl.appendChild(li);
+        });
+      }
+
+      setStatus("");
+    }
+
+    async function addDevice() {
+      setLoading(true);
+      setStatus("Adding device...");
+      try {
+        const name = deviceNameEl.value.trim();
+        const hvac_location = deviceLocationEl.value.trim();
+
+        if (!name) {
+          setStatus("Device name is required", true);
+          setLoading(false);
+          return;
+        }
+
+        // We don't manually set owner_id – RLS expects it to be auth.uid().
+        // So we fetch the current user id and send it.
+        const { data: authData } = await supabase.auth.getUser();
+        const user = authData.user;
+        if (!user) {
+          setStatus("Not logged in", true);
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await supabase.from("devices").insert({
+          owner_id: user.id, // required by our RLS policy
+          name,
+          hvac_location,
+        });
+
+        if (error) throw error;
+
+        deviceNameEl.value = "";
+        deviceLocationEl.value = "";
+        setStatus("Device added.");
+        await loadDevices();
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Failed to add device", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+        async function addFakeLog() {
+      if (!selectedDevice) {
+        setStatus("Select a device first (click one in the list).", true);
+        return;
+      }
+
+      setLoading(true);
+      setStatus("Adding test log...");
+
+      try {
+        // Simple fake data
+        const temp_c = 20 + Math.random() * 5;         // 20–25 C
+        const humidity = 40 + Math.random() * 20;      // 40–60 %
+        const pressure_pa = 100000 + Math.random() * 500; // ~100k Pa
+        const statuses = ["ok", "replace_soon", "replace_now"];
+        const filter_status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        const { error } = await supabase.from("sensor_logs").insert({
+          device_id: selectedDevice.id,
+          temp_c,
+          humidity,
+          pressure_pa,
+          filter_status,
+        });
+
+        if (error) throw error;
+
+        setStatus("Test log added.");
+        await loadLogs(selectedDevice.id);
+      } catch (err) {
+        console.error(err);
+        setStatus(err.message || "Failed to add log", true);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // Event listeners
+    btnSignup.addEventListener("click", signUp);
+    btnLogin.addEventListener("click", logIn);
+    btnLogout.addEventListener("click", logOut);
+    btnAddDevice.addEventListener("click", addDevice);
+    btnAddFakeLog.addEventListener("click", addFakeLog);
+
+    // React to auth changes (e.g. sign in/out in another tab)
+    supabase.auth.onAuthStateChange((_event, _session) => {
+      refreshSessionAndUI();
+    });
+
+    // Initial load
+    refreshSessionAndUI();
+  </script>
+</body>
+</html>
