@@ -43,18 +43,14 @@ extern "C" {
 #define RFID_TIMEOUT_MS   15000
 
 /* ===================== SUPABASE ===================== */
-static const char* SUPABASE_INGEST_URL =
-  "https://hniplnaohvcbtmelatnz.functions.supabase.co/ingest_logs";
-
-static const char* SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuaXBsbmFvaHZjYnRtZWxhdG56Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDU3OTQyMCwiZXhwIjoyMDgwMTU1NDIwfQ.qcLuZA8m8EQDPQDHwmbUEFsWmKkeekOPpWNTRMXXLRU";
-
+static const char* SUPABASE_INGEST_URL = "";
+static const char* SUPABASE_ANON_KEY = "";
 #define LOG(x) Serial.println(x)
 
 /* ===================== HOST RELAY ===================== */
-#define HOST_SSID "ESP32_HOTSPOT"
-#define HOST_PASS "FiltSure_Rules"
-#define HOST_URL  "http://192.168.4.1/data"
+#define HOST_SSID ""
+#define HOST_PASS ""
+#define HOST_URL  ""
 
 /* ===================== OBJECTS ===================== */
 #if USE_BME
