@@ -1,0 +1,8 @@
+# AirFlow IQ Analytics - Python Dependencies
+# Install with: pip install -r requirements.txt --break-system-packages
+
+PyQt5>=5.15.0
+pandas>=1.3.0
+matplotlib>=3.4.0
+supabase>=2.0.0
+pyinstaller>=6.0.0
