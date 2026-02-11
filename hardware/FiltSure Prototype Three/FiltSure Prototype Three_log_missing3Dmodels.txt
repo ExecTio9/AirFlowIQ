@@ -1,0 +1,1 @@
+[('L1', 'C:\\Program Files\\KiCad\\9.0\\share\\kicad\\3dmodels\\Inductor_SMD.3dshapes\\L_Neosid_SM-PIC0512H.wrl')]

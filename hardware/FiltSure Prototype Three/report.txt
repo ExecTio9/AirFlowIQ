@@ -1,0 +1,13 @@
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-F_Cu.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-In1_Cu.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-In2_Cu.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-B_Cu.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-F_Paste.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-B_Paste.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-F_Silkscreen.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-B_Silkscreen.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-F_Mask.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-B_Mask.gbr'.
+Plotted to 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-Edge_Cuts.gbr'.
+Created Gerber job file 'C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\2.3.2\FiltSure Prototype Three-job.gbrjob'.
+Info: Done.

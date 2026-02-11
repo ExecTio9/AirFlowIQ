@@ -1,0 +1,10 @@
+### Missing 3D models - created on 2025-05-28 10:19
+### Printed by checking_3D_models plugin
+Board file: C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\FiltSure Prototype Three.kicad_pcb
+3D missing models written to:
+C:\Users\bcalh\Desktop\WORK\FiltSure Prototype Three\FiltSure Prototype Three_missing3Dmodels.txt
+-------
+('L1', 'C:\\Program Files\\KiCad\\9.0\\share\\kicad\\3dmodels\\Inductor_SMD.3dshapes\\L_Neosid_SM-PIC0512H.wrl')
+-------
+NUM of 3D missing models:1
+checked extensions ['.stp', '.step', '.stpZ']

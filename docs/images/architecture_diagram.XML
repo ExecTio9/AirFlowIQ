@@ -1,0 +1,25 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Architecture">
+    <mxGraphModel dx="1034" dy="748" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Sensor Node&#xa;ESP32-C6&#xa;BME280&#xa;MFRC522 RFID&#xa;14-bit ADC&#xa;Wind Fan&#xa;RGB LED&#xa;RFM95 LoRa" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAE8FC;strokeColor=#6C8EBF;" vertex="1" parent="1">
+          <mxGeometry x="60" y="180" width="160" height="180" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="Gateway Node&#xa;ESP32-C3/C6&#xa;RFM95 LoRa RX&#xa;WiFi Client/AP&#xa;OTA Delivery&#xa;PING → PONG&#xa;Google Apps Script Forwarding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D5E8D4;strokeColor=#82B366;" vertex="1" parent="1">
+          <mxGeometry x="300" y="180" width="180" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="Cloud&#xa;Google Apps Script Web App&#xa;Google Sheets&#xa;Per-Node Tabs (UNIT_&lt;DeviceID&gt;)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;" vertex="1" parent="1">
+          <mxGeometry x="580" y="200" width="200" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endFill=1;strokeColor=#000000;" edge="1" parent="1" source="2" target="3">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=blockThin;endFill=1;strokeColor=#000000;" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
