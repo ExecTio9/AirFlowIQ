@@ -1,0 +1,23 @@
+#makes it to that secret files are not commited
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.venv/
+venv/
+
+# ---- Environment variables ----
+.env
+
+# ---- Secrets / credentials ----
+*.json
+
+# ---- OS junk ----
+.DS_Store
+Thumbs.db
+
+# ---- IDEs ----
+.vscode/
+.idea/
