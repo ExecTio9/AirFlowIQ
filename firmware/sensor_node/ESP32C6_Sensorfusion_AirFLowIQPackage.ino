@@ -43,20 +43,21 @@ extern "C" {
 #define RFID_TIMEOUT_MS   15000
 
 /* ===================== SUPABASE ===================== */
-static const char* SUPABASE_INGEST_URL = "";
-static const char* SUPABASE_ANON_KEY = "";
+static const char* SUPABASE_INGEST_URL =
+  "https://hniplnaohvcbtmelatnz.functions.supabase.co/ingest_logs";
+
+static const char* SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuaXBsbmFvaHZjYnRtZWxhdG56Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDU3OTQyMCwiZXhwIjoyMDgwMTU1NDIwfQ.qcLuZA8m8EQDPQDHwmbUEFsWmKkeekOPpWNTRMXXLRU";
+
 #define LOG(x) Serial.println(x)
 
 /* ===================== HOST RELAY ===================== */
-#define HOST_SSID ""
-#define HOST_PASS ""
-#define HOST_URL  ""
+#define HOST_SSID "ESP32_HOTSPOT"
+#define HOST_PASS "FiltSure_Rules"
+#define HOST_URL  "http://192.168.4.1/data"
 
 /* ===================== OBJECTS ===================== */
-#if USE_BME
-Adafruit_BME280 bme(BME_CS, MOSI, MISO, SCK);
-#endif
-
+Adafruit_BME280 bme(BME_CS);
 MFRC522 rfid(RFID_CS, RFID_RST);
 RH_RF95 radio(LORA_CS, LORA_INT);
 
@@ -162,23 +163,34 @@ float readWindSpeed_mps(float &outRPM) {
 
 /* ===================== SENSORS ===================== */
 void readSensors() {
-  rfid.PCD_Init(); // start rfid
-  rfid.PCD_AntennaOn(); // ensure max power antenna
-  waitForRFID_WithTimeout(rfidUID, RFID_TIMEOUT_MS); // run timeout sequence
+  // Make sure no other SPI device is selected
+  deselectAllSPI();
+
+  // ---- RFID first (quick) ----
+  rfid.PCD_Init();
+  rfid.PCD_AntennaOn();
+  rfid.PCD_SetAntennaGain(rfid.RxGain_max);
+  waitForRFID_WithTimeout(rfidUID, 1500);   // don’t block 15s while debugging
+  deselectAllSPI();
 
 #if USE_BME
-  if (bme.begin(BME_CS)) { // start bme using bme_cs pin
-    Temp = bme.readTemperature(); // read temperature "C"
-    Humd = bme.readHumidity(); // read humidity "RH"
-    Prs  = bme.readPressure() / 100.0f; // read pressure "Pa"
-    Status_Read_Sensor = "Success"; // determines read succes
+  // ---- BME second ----
+  // Select BME for begin/read then release
+  digitalWrite(BME_CS, LOW);
+  delay(5);
+  if (bme.begin()) {
+    Temp = bme.readTemperature();
+    Humd = bme.readHumidity();
+    Prs  = bme.readPressure() / 100.0f;
+    Status_Read_Sensor = "Success";
   } else {
-    Status_Read_Sensor = "Failed"; // else determines fail
+    Status_Read_Sensor = "Failed";
   }
+  digitalWrite(BME_CS, HIGH);
 #endif
 
-  float rpm; // grab RPM adc value from fan
-  windSpeed = readWindSpeed_mps(rpm); // convert to meter per second
+  float rpm;
+  windSpeed = readWindSpeed_mps(rpm);
 }
 
 /* ===================== JSON ===================== */
@@ -349,6 +361,11 @@ void setup() {
   Serial.begin(115200);
   delay(200);
   enableRegulator();
+
+  SPI.begin(SCK, MISO, MOSI);
+  pinMode(BME_CS, OUTPUT);  digitalWrite(BME_CS, HIGH);
+  pinMode(RFID_CS, OUTPUT); digitalWrite(RFID_CS, HIGH);
+  pinMode(LORA_CS, OUTPUT); digitalWrite(LORA_CS, HIGH);
 
   ++bootCount;
   ID = makeDeviceIdFromMac();
